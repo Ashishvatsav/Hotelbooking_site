@@ -12,6 +12,12 @@ import com.example.DemoHotelBooking.entity.Promotion;
 import com.example.DemoHotelBooking.exception.BadRequestException;
 import com.example.DemoHotelBooking.exception.ResourceNotFoundException;
 import com.example.DemoHotelBooking.repository.PromotionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PromotionService {
