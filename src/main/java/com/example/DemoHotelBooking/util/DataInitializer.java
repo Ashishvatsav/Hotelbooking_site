@@ -5,17 +5,15 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
+import com.example.DemoHotelBooking.entity.*;
+import com.example.DemoHotelBooking.repository.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -160,28 +158,25 @@ public class DataInitializer implements CommandLineRunner {
                             .hotelName("Urban Central Hotel")
                             .location("San Francisco, CA")
                             .description("Modern downtown hotel steps from transit, museums, and a buzzing nightlife scene.")
+                            .build(),
+                    Hotel.builder()
+                            .hotelName("Celestial Crown Hotel")
+                            .location("Chicago, IL")
+                            .description("Step into timeless elegance at our heritage-inspired retreat featuring royal suites, rooftop candlelight dining, a luxury spa, and breathtaking city skyline views.")
+                            .build(),
+                    Hotel.builder()
+                            .hotelName("Silver Oak Vineyard Resort")
+                            .location("Napa Valley, CA")
+                            .description("Nestled beside tranquil vineyards and rolling hills, this countryside escape offers wine tasting tours, organic farm-to-table cuisine, and private jacuzzi villas.")
+                            .build(),
+                    Hotel.builder()
+                            .hotelName("Azure Mirage Resort")
+                            .location("Phoenix, AZ")
+                            .description("Experience futuristic comfort in our ultra-modern desert oasis with smart suites, rooftop infinity pools, live entertainment arenas, and stunning sunset dune views.")
                             .build()
             );
 
-            Hotel hotel5 = Hotel.builder()
-                    .hotelName("Celestial Crown Hotel")
-                    .location("Chicago, IL")
-                    .description("Step into timeless elegance at our heritage-inspired retreat featuring royal suites, rooftop candlelight dining, a luxury spa, and breathtaking city skyline views.")
-                    .build();
-
-            Hotel hotel6 = Hotel.builder()
-                    .hotelName("Silver Oak Vineyard Resort")
-                    .location("Napa Valley, CA")
-                    .description("Nestled beside tranquil vineyards and rolling hills, this countryside escape offers wine tasting tours, organic farm-to-table cuisine, and private jacuzzi villas.")
-                    .build();
-
-            Hotel hotel7 = Hotel.builder()
-                    .hotelName("Azure Mirage Resort")
-                    .location("Phoenix, AZ")
-                    .description("Experience futuristic comfort in our ultra-modern desert oasis with smart suites, rooftop infinity pools, live entertainment arenas, and stunning sunset dune views.")
-                    .build();
-
-            hotelRepository.saveAll(Arrays.asList(hotel1, hotel2, hotel3, hotel4, hotel5, hotel6, hotel7));
+            hotelRepository.saveAll(initialHotels);
             logger.info("Seeded hotels.");
         }
 
@@ -190,7 +185,7 @@ public class DataInitializer implements CommandLineRunner {
         // 5. Seed Rooms
         if (roomRepository.count() == 0) {
             // Seed Rooms for Grand Palace Resort (Hotel 0)
-            Hotel miamiHotel = allHotels.get(0);
+            Hotel miamiHotel = allHotels.stream().filter(h -> h.getHotelName().equals("Grand Palace Resort & Spa")).findFirst().orElseThrow(() -> new RuntimeException("Miami Hotel not found"));
             roomRepository.save(Room.builder()
                     .hotel(miamiHotel)
                     .category(standardCat)
@@ -217,7 +212,7 @@ public class DataInitializer implements CommandLineRunner {
                     .build());
 
             // Seed Rooms for The Manhattan Heights (Hotel 1)
-            Hotel nyHotel = allHotels.get(1);
+            Hotel nyHotel = allHotels.stream().filter(h -> h.getHotelName().equals("The Manhattan Heights Hotel")).findFirst().orElseThrow(() -> new RuntimeException("New York Hotel not found"));
             roomRepository.save(Room.builder()
                     .hotel(nyHotel)
                     .category(standardCat)
@@ -236,7 +231,7 @@ public class DataInitializer implements CommandLineRunner {
                     .build());
 
             // Seed Rooms for Alpine Heights (Hotel 2)
-            Hotel denverHotel = allHotels.get(2);
+            Hotel denverHotel = allHotels.stream().filter(h -> h.getHotelName().equals("Alpine Heights Mountain Lodge")).findFirst().orElseThrow(() -> new RuntimeException("Denver Hotel not found"));
             roomRepository.save(Room.builder()
                     .hotel(denverHotel)
                     .category(deluxeCat)
@@ -255,7 +250,7 @@ public class DataInitializer implements CommandLineRunner {
                     .build());
 
             // Seed Rooms for Tropical Bay Sands (Hotel 3)
-            Hotel hawaiiHotel = allHotels.get(3);
+            Hotel hawaiiHotel = allHotels.stream().filter(h -> h.getHotelName().equals("Tropical Bay Sands")).findFirst().orElseThrow(() -> new RuntimeException("Hawaii Hotel not found"));
             roomRepository.save(Room.builder()
                     .hotel(hawaiiHotel)
                     .category(deluxeCat)
@@ -274,7 +269,7 @@ public class DataInitializer implements CommandLineRunner {
                     .build());
 
             // Seed Rooms for Celestial Crown Hotel (Hotel 4)
-            Hotel chicagoHotel = allHotels.get(4);
+            Hotel chicagoHotel = allHotels.stream().filter(h -> h.getHotelName().equals("Celestial Crown Hotel")).findFirst().orElseThrow(() -> new RuntimeException("Chicago Hotel not found"));
             roomRepository.save(Room.builder()
                     .hotel(chicagoHotel)
                     .category(standardCat)
@@ -301,7 +296,7 @@ public class DataInitializer implements CommandLineRunner {
                     .build());
 
             // Seed Rooms for Silver Oak Vineyard Resort (Hotel 5)
-            Hotel napaHotel = allHotels.get(5);
+            Hotel napaHotel = allHotels.stream().filter(h -> h.getHotelName().equals("Silver Oak Vineyard Resort")).findFirst().orElseThrow(() -> new RuntimeException("Napa Hotel not found"));
             roomRepository.save(Room.builder()
                     .hotel(napaHotel)
                     .category(deluxeCat)
@@ -320,7 +315,7 @@ public class DataInitializer implements CommandLineRunner {
                     .build());
 
             // Seed Rooms for Azure Mirage Resort (Hotel 6)
-            Hotel phoenixHotel = allHotels.get(6);
+            Hotel phoenixHotel = allHotels.stream().filter(h -> h.getHotelName().equals("Azure Mirage Resort")).findFirst().orElseThrow(() -> new RuntimeException("Phoenix Hotel not found"));
             roomRepository.save(Room.builder()
                     .hotel(phoenixHotel)
                     .category(deluxeCat)
