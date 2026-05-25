@@ -1,7 +1,10 @@
 package com.example.DemoHotelBooking.util;
 
-import com.example.DemoHotelBooking.entity.*;
-import com.example.DemoHotelBooking.repository.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,11 +12,18 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import com.example.DemoHotelBooking.entity.Amenity;
+import com.example.DemoHotelBooking.entity.Hotel;
+import com.example.DemoHotelBooking.entity.Promotion;
+import com.example.DemoHotelBooking.entity.Room;
+import com.example.DemoHotelBooking.entity.RoomCategory;
+import com.example.DemoHotelBooking.entity.User;
+import com.example.DemoHotelBooking.repository.AmenityRepository;
+import com.example.DemoHotelBooking.repository.HotelRepository;
+import com.example.DemoHotelBooking.repository.PromotionRepository;
+import com.example.DemoHotelBooking.repository.RoomCategoryRepository;
+import com.example.DemoHotelBooking.repository.RoomRepository;
+import com.example.DemoHotelBooking.repository.UserRepository;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -105,34 +115,70 @@ public class DataInitializer implements CommandLineRunner {
         RoomCategory suiteCat = allCategories.stream().filter(c -> c.getCategoryName().equals("Executive Suite")).findFirst().orElse(allCategories.get(0));
         RoomCategory penthouseCat = allCategories.stream().filter(c -> c.getCategoryName().equals("Presidential Penthouse")).findFirst().orElse(allCategories.get(0));
 
-        // 4. Seed Hotels
-        if (hotelRepository.count() == 0) {
-            Hotel hotel1 = Hotel.builder()
-                    .hotelName("Grand Palace Resort & Spa")
-                    .location("Miami, FL")
-                    .description("Experience absolute luxury with direct beach access, multi-cuisine gourmet dining, and a world-class infinity pool overlooking the Atlantic.")
-                    .build();
+        // 4. Seed Hotels — ensure at least 10 hotels exist
+        if (hotelRepository.count() < 10) {
+            List<Hotel> initialHotels = Arrays.asList(
+                    Hotel.builder()
+                            .hotelName("Grand Palace Resort & Spa")
+                            .location("Miami, FL")
+                            .description("Experience absolute luxury with direct beach access, multi-cuisine gourmet dining, and a world-class infinity pool overlooking the Atlantic.")
+                            .build(),
+                    Hotel.builder()
+                            .hotelName("The Manhattan Heights Hotel")
+                            .location("New York, NY")
+                            .description("A sleek, modern tower rising above Midtown Manhattan, featuring a panoramic rooftop sky lounge, fine Italian dining, and swift access to Broadway theaters.")
+                            .build(),
+                    Hotel.builder()
+                            .hotelName("Alpine Heights Mountain Lodge")
+                            .location("Denver, CO")
+                            .description("Escape to our cozy timber-framed lodge featuring rustic fieldstone fireplaces, heated outdoor thermal pools, and ski-in/ski-out convenience.")
+                            .build(),
+                    Hotel.builder()
+                            .hotelName("Tropical Bay Sands")
+                            .location("Honolulu, HI")
+                            .description("Enclosed by palm trees and crystalline waters, this Hawaiian paradise offers private beachside cabanas, surf lessons, and authentic Polynesian luaus.")
+                            .build(),
+                    // Additional hotels to reach 10
+                    Hotel.builder()
+                            .hotelName("Riverside Boutique")
+                            .location("Portland, OR")
+                            .description("Charming riverside boutique hotel with artisanal breakfasts and bike rentals for local exploration.")
+                            .build(),
+                    Hotel.builder()
+                            .hotelName("Desert Oasis Retreat")
+                            .location("Phoenix, AZ")
+                            .description("A serene desert hideaway featuring rooftop stargazing lounges and guided desert hikes.")
+                            .build(),
+                    Hotel.builder()
+                            .hotelName("Lakeside Grand Hotel")
+                            .location("Chicago, IL")
+                            .description("Historic lakeside hotel with elegant ballrooms, panoramic views of the city skyline, and private marina access.")
+                            .build(),
+                    Hotel.builder()
+                            .hotelName("Sequoia Forest Inn")
+                            .location("Groveland, CA")
+                            .description("Nestled near giant sequoias, offering guided nature walks and cozy wood-burning fireplaces.")
+                            .build(),
+                    Hotel.builder()
+                            .hotelName("Coastal Cliffs Retreat")
+                            .location("Big Sur, CA")
+                            .description("Clifftop suites with dramatic Pacific Ocean views and farm-to-table dining experiences.")
+                            .build(),
+                    Hotel.builder()
+                            .hotelName("Urban Central Hotel")
+                            .location("San Francisco, CA")
+                            .description("Modern downtown hotel steps from transit, museums, and a buzzing nightlife scene.")
+                            .build()
+            );
 
-            Hotel hotel2 = Hotel.builder()
-                    .hotelName("The Manhattan Heights Hotel")
-                    .location("New York, NY")
-                    .description("A sleek, modern tower rising above Midtown Manhattan, featuring a panoramic rooftop sky lounge, fine Italian dining, and swift access to Broadway theaters.")
-                    .build();
-
-            Hotel hotel3 = Hotel.builder()
-                    .hotelName("Alpine Heights Mountain Lodge")
-                    .location("Denver, CO")
-                    .description("Escape to our cozy timber-framed lodge featuring rustic fieldstone fireplaces, heated outdoor thermal pools, and ski-in/ski-out convenience.")
-                    .build();
-
-            Hotel hotel4 = Hotel.builder()
-                    .hotelName("Tropical Bay Sands")
-                    .location("Honolulu, HI")
-                    .description("Enclosed by palm trees and crystalline waters, this Hawaiian paradise offers private beachside cabanas, surf lessons, and authentic Polynesian luaus.")
-                    .build();
-
-            hotelRepository.saveAll(Arrays.asList(hotel1, hotel2, hotel3, hotel4));
-            logger.info("Seeded hotels.");
+            // Save only the number of hotels required to reach 10
+            int current = (int) hotelRepository.count();
+            int needed = 10 - current;
+            if (needed > 0) {
+                List<Hotel> toAdd = initialHotels.subList(0, Math.min(needed, initialHotels.size()));
+                hotelRepository.saveAll(toAdd);
+                logger.info("Seeded {} additional hotels.", toAdd.size());
+            }
         }
 
         List<Hotel> allHotels = hotelRepository.findAll();
